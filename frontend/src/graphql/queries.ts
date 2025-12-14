@@ -88,3 +88,25 @@ export const ADD_COMMENT = gql`
     }
   }
 `;
+
+export const GET_ALL_ORGS = gql`
+  query GetAllOrgs {
+    allOrganizations {
+      id
+      name
+      slug
+    }
+  }
+`;
+
+export const CREATE_ORGANIZATION = gql`
+  mutation CreateOrganization($name: String!, $email: String) {
+    createOrganization(name: $name, email: $email) {
+      organization {
+        id
+        name
+        slug
+      }
+    }
+  }
+`;

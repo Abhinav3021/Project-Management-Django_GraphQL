@@ -1,3 +1,4 @@
+from django.utils.text import slugify
 import graphene
 from graphene_django import DjangoObjectType
 from .models import Organization, Project, Task, TaskComment
@@ -32,6 +33,28 @@ class TaskCommentType(DjangoObjectType):
     class Meta:
         model = TaskComment
         fields = "__all__"
+
+class CreateOrganization(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        email = graphene.String()
+
+    organization = graphene.Field(OrganizationType)
+
+    def mutate(self, info, name, email=None):
+        # Auto-generate slug from name (e.g., "My Startup" -> "my-startup")
+        slug = slugify(name)
+
+        # Check if slug exists to prevent crash (simple logic for now)
+        if Organization.objects.filter(slug=slug).exists():
+            raise Exception("An organization with a similar name already exists.")
+
+        org = Organization.objects.create(
+            name=name, 
+            slug=slug, 
+            contact_email=email
+        )
+        return CreateOrganization(organization=org)
 
 # 2. Define Mutations (Create/Update Operations)
 
@@ -122,13 +145,16 @@ class AddComment(graphene.Mutation):
 class Query(graphene.ObjectType):
     # Fetch all projects for a specific organization (Multi-tenancy enforcement)
     organization_projects = graphene.List(ProjectType, org_slug=graphene.String(required=True))
-    
+    all_organizations = graphene.List(OrganizationType)
     # Fetch details of a single project
     project = graphene.Field(ProjectType, id=graphene.ID(required=True))
 
     def resolve_organization_projects(self, info, org_slug):
         # This enforces data isolation. You must provide a valid slug to see projects.
         return Project.objects.filter(organization__slug=org_slug)
+    def resolve_all_organizations(self, info):
+        return Organization.objects.all()
+    
 
     def resolve_project(self, info, id):
         return Project.objects.get(pk=id)
@@ -138,3 +164,4 @@ class Mutation(graphene.ObjectType):
     create_task = CreateTask.Field()
     update_task_status = UpdateTaskStatus.Field()
     add_comment = AddComment.Field()
+    create_organization = CreateOrganization.Field()
