@@ -42,7 +42,10 @@ const NavigationBar = () => {
                   <select
                     value={currentOrgSlug}
                     onChange={(e) => setCurrentOrgSlug(e.target.value)}
-                    className="text-sm font-medium text-slate-900 bg-transparent border-none focus:ring-0 cursor-pointer appearance-none text-right"
+                    //className="text-sm font-medium text-slate-900 bg-transparent border-none focus:ring-0 cursor-pointer appearance-none text-right"
+                    className="
+                              text-xs font-semibold uppercase tracking-wide text-slate-600 bg-white border border-slate-300 rounded-md px-1 py-1
+                              shadow-sm hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer"
                     style={{ textAlignLast: 'right' }}
                   >
                     {data?.allOrganizations.map((org: any) => (

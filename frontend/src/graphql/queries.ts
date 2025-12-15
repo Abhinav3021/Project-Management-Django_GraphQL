@@ -110,3 +110,48 @@ export const CREATE_ORGANIZATION = gql`
     }
   }
 `;
+
+export const UPDATE_PROJECT = gql`
+  mutation UpdateProject($id: ID!, $name: String, $description: String, $status: String, $dueDate: Date) {
+    updateProject(id: $id, name: $name, description: $description, status: $status, dueDate: $dueDate) {
+      project {
+        id
+        name
+        description
+        status
+        dueDate
+      }
+    }
+  }
+`;
+
+export const DELETE_PROJECT = gql`
+  mutation DeleteProject($id: ID!) {
+    deleteProject(id: $id) {
+      success
+    }
+  }
+`;
+
+export const UPDATE_TASK = gql`
+  mutation UpdateTask($id: ID!, $title: String, $description: String, $assigneeEmail: String, $dueDate: Date) {
+    updateTask(id: $id, title: $title, description: $description, assigneeEmail: $assigneeEmail, dueDate: $dueDate) {
+      task {
+        id
+        title
+        description
+        assigneeEmail
+        dueDate
+      }
+    }
+  }
+`;
+
+export const DELETE_TASK = gql`
+  mutation DeleteTask($id: ID!) {
+    deleteTask(id: $id) {
+      success
+      id
+    }
+  }
+`;

@@ -158,6 +158,78 @@ class Query(graphene.ObjectType):
 
     def resolve_project(self, info, id):
         return Project.objects.get(pk=id)
+    
+class UpdateProject(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+        name = graphene.String()
+        description = graphene.String()
+        status = graphene.String()
+        due_date = graphene.Date()
+
+    project = graphene.Field(ProjectType)
+
+    def mutate(self, info, id, name=None, description=None, status=None, due_date=None):
+        try:
+            project = Project.objects.get(pk=id)
+            if name: project.name = name
+            if description is not None: project.description = description
+            if status: project.status = status
+            if due_date: project.due_date = due_date
+            project.save()
+            return UpdateProject(project=project)
+        except Project.DoesNotExist:
+            raise Exception("Project not found")
+
+class DeleteProject(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+
+    success = graphene.Boolean()
+
+    def mutate(self, info, id):
+        try:
+            Project.objects.get(pk=id).delete()
+            return DeleteProject(success=True)
+        except Project.DoesNotExist:
+            return DeleteProject(success=False)
+
+# 2. Task Mutations
+class UpdateTask(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+        title = graphene.String()
+        description = graphene.String()
+        assignee_email = graphene.String()
+        due_date = graphene.Date()
+
+    task = graphene.Field(TaskType)
+
+    def mutate(self, info, id, title=None, description=None, assignee_email=None, due_date=None):
+        try:
+            task = Task.objects.get(pk=id)
+            if title: task.title = title
+            if description is not None: task.description = description
+            if assignee_email is not None: task.assignee_email = assignee_email
+            if due_date: task.due_date = due_date
+            task.save()
+            return UpdateTask(task=task)
+        except Task.DoesNotExist:
+            raise Exception("Task not found")
+
+class DeleteTask(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+
+    success = graphene.Boolean()
+    id = graphene.ID() # Return ID so cache knows what to remove
+
+    def mutate(self, info, id):
+        try:
+            Task.objects.get(pk=id).delete()
+            return DeleteTask(success=True, id=id)
+        except Task.DoesNotExist:
+            return DeleteTask(success=False, id=id)
 
 class Mutation(graphene.ObjectType):
     create_project = CreateProject.Field()
@@ -165,3 +237,9 @@ class Mutation(graphene.ObjectType):
     update_task_status = UpdateTaskStatus.Field()
     add_comment = AddComment.Field()
     create_organization = CreateOrganization.Field()
+    update_project = UpdateProject.Field()
+    delete_project = DeleteProject.Field()
+    update_task = UpdateTask.Field()
+    delete_task = DeleteTask.Field()
+    
+    
