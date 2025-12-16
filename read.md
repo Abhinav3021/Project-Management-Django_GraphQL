@@ -45,12 +45,13 @@ We use Docker to spin up a PostgreSQL instance effortlessly.
 # In the root directory (where docker-compose.yml is)
 docker-compose up -d
 ```
-3. Backend Setup
+### 3. Backend Setup
 Open a new terminal for the backend.
 
-Bash
+```bash
 
 cd backend
+
 
 # 1. Create a virtual environment
 python -m venv venv
@@ -73,11 +74,11 @@ python manage.py createsuperuser
 # 6. Start the Server
 python manage.py runserver
 The Backend API will be available at: http://localhost:8000/graphql
-
-4. Frontend Setup
+```
+### 4. Frontend Setup
 Open a new terminal for the frontend.
 
-Bash
+```bash
 
 cd frontend
 
@@ -86,17 +87,11 @@ npm install
 
 # 2. Start the Development Server
 npm run dev
+```
 The Application will be available at: http://localhost:5173
 
-🧪 Testing
-Backend Tests
-The backend includes a suite of unit tests for Models and GraphQL Mutations.
 
-Bash
-
-cd backend
-python manage.py test
-📖 API Documentation (GraphQL)
+### 📖 API Documentation (GraphQL)
 This project uses a single GraphQL endpoint. You can explore the schema and test queries using the interactive GraphiQL interface.
 
 Ensure the backend is running.
@@ -105,7 +100,7 @@ Navigate to http://localhost:8000/graphql in your browser.
 
 Sample Queries
 1. Fetch All Organizations (For Dropdown)
-
+```bash
 GraphQL
 
 query {
@@ -114,9 +109,10 @@ query {
     name
     slug
   }
+  ```
 }
 2. Fetch Projects for an Organization
-
+```bash
 GraphQL
 
 query {
@@ -128,8 +124,9 @@ query {
     completedTaskCount
   }
 }
+```
 3. Create a New Task
-
+```bash
 GraphQL
 
 mutation {
@@ -141,7 +138,9 @@ mutation {
     }
   }
 }
+```
 📂 Project Structure
+```bash
 pm-system/
 ├── backend/                # Django Project
 │   ├── core/              # Settings & Configuration
@@ -158,7 +157,8 @@ pm-system/
 │   └── package.json
 ├── docker-compose.yml      # PostgreSQL Service
 └── README.md               # Documentation
-🛡 Design Decisions & Trade-offs
+```
+# 🛡 Design Decisions & Trade-offs
 GraphQL over REST: Chosen to solve the "over-fetching" problem. We can fetch a project, its tasks, and task comments in a single network request rather than hitting 3 separate endpoints.
 
 Optimistic UI: The frontend does not currently implement Optimistic Response (updating UI before server confirms) for simplicity, but it does use Apollo's refetchQueries to ensure data consistency after mutations.
